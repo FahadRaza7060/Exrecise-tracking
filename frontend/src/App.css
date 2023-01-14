@@ -1,0 +1,22 @@
+.aa {
+  display: flex;
+  flex-direction: row;
+  /* justify-content: center; */
+}
+
+.bb {
+  display: flex;
+  flex-direction: column;
+}
+
+.data {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 5px 50px;
+}
+
+.btn {
+  width: 250px;
+  height: 60px;
+}
