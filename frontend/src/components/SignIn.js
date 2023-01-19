@@ -58,27 +58,31 @@ function SignIn() {
       <h1 className="display-3 text-center mb-3 fw-bold">Login Page</h1>
       <div className="card w-50 m-auto shadow border-0 aa">
         <div className="card-body bb">
-          <label className="text-center fw-bold">Email</label>
+          <label className="text-center fw-bold fs-2">Email</label>
           <input
             type="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
           />
           <br />
-          <br />
-          <label className="text-center fw-bold">Password</label>
+          <label className="text-center fw-bold fs-2">Password</label>
           <input
             type="password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
           />
+          <button
+            className="btn btn-primary mt-5 mb-3 fs-3"
+            style={{
+              marginLeft: 230,
+            }}
+            type="button"
+            onClick={register}
+          >
+            Login
+          </button>
         </div>
       </div>
-      <br />
-      <br />
-      <button className="btn btn-primary" type="button" onClick={register}>
-        Login
-      </button>
     </>
   );
 }

@@ -63,50 +63,53 @@ function Register() {
     <>
       <h1 className="display-3 text-center mb-3 fw-bold">Register</h1>
       <div className="card w-50 m-auto shadow border-0 aa">
-        <div className="card-body bb"></div>
-        <label className="text-center fw-bold">First Name</label>
-        <input
-          type="text"
-          value={firstName}
-          onChange={(e) => setFirstName(e.target.value)}
-        />
-        <br />
-        <br />
-        <label className="text-center fw-bold">Last Name</label>
-        <input
-          type="text"
-          value={lastName}
-          onChange={(e) => setLastName(e.target.value)}
-        />
-        <br />
-        <br />
-        <label className="text-center fw-bold">Email</label>
-        <input
-          type="email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-        />
-        <br />
-        <br />
-        <label className="text-center fw-bold">Password</label>
-        <input
-          type="password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-        />
-        <br />
-        <br />
-        <label className="text-center fw-bold">Confirm Password</label>
-        <input
-          type="password"
-          value={confirmPassword}
-          onChange={(e) => setConfirmPassword(e.target.value)}
-        />
+        <div className="card-body bb">
+          <label className="text-center fw-bold fs-2">First Name</label>
+          <input
+            type="text"
+            value={firstName}
+            onChange={(e) => setFirstName(e.target.value)}
+          />
+          <br />
+          <label className="text-center fw-bold fs-2">Last Name</label>
+          <input
+            type="text"
+            value={lastName}
+            onChange={(e) => setLastName(e.target.value)}
+          />
+          <br />
+          <label className="text-center fw-bold fs-2">Email</label>
+          <input
+            type="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+          />
+          <br />
+          <label className="text-center fw-bold fs-2">Password</label>
+          <input
+            type="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+          />
+          <br />
+          <label className="text-center fw-bold fs-2">Confirm Password</label>
+          <input
+            type="password"
+            value={confirmPassword}
+            onChange={(e) => setConfirmPassword(e.target.value)}
+          />
+          <button
+            className="btn btn-primary mt-4 mb-3 fs-3"
+            style={{
+              marginLeft: 230,
+            }}
+            type="button"
+            onClick={register}
+          >
+            Register
+          </button>
+        </div>
       </div>
-      <br />
-      <button className="btn btn-primary" type="button" onClick={register}>
-        Register
-      </button>
     </>
   );
 }

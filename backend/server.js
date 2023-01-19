@@ -2,14 +2,13 @@ const express = require("express");
 const cors = require("cors");
 const mongoose = require("mongoose");
 const User = require("./models/user.model");
+const ExerciseInform = require("./models/tracking.model");
 const jwt = require("jsonwebtoken");
 
-// mongoose.connect("mongodb://localhost:27017/exercise");
 mongoose.set("strictQuery", false);
 mongoose.connect("mongodb://localhost:27017/exercise", function (err, db) {
   if (err) throw err;
   console.log("Database created seccessfully!");
-  //   db.close();
 });
 
 const server = express();
@@ -17,10 +16,12 @@ server.use(express.urlencoded());
 server.use(express.json());
 server.use(cors({ origin: "*" }));
 
+// data post
 server.post("/posts", async (req, res) => {
+  // validation apply
   //   console.log(req.body);
   const { firstName, lastName, email, password } = req.body;
-  if (!firstName || !email || !password) {
+  if (!firstName || !lastName || !email || !password) {
     return res
       .status(400)
       .send({ status: false, message: "Please submit all required fields!" });
@@ -39,7 +40,7 @@ server.post("/posts", async (req, res) => {
 
   let user = await User.create({ firstName, lastName, email, password });
 
-  const accessToken = jwt.sign({ user_id: user._id }, "fahad", {
+  const accessToken = jwt.sign({ id: user._id }, "fahad", {
     expiresIn: "7d",
   });
   res.send({
@@ -63,6 +64,7 @@ const middleware = async (req, res, next) => {
   });
 };
 
+// check user created or not
 server.post("/create", middleware, async (req, res) => {
   const { firstName, lastName, email, password } = req.body;
   if (!firstName || !email || !password) {
@@ -94,10 +96,14 @@ const validateEmail = (email) => {
     );
 };
 
+// login
 server.post("/login", async (req, res) => {
-  const user = await User.findOne({ email: req.body.email });
+  const user = await User.findOne({
+    email: req.body.email,
+    password: req.body.password,
+  });
   const accessToken = jwt.sign({ id: user._id }, "fahad", {
-    expiresIn: "2h",
+    expiresIn: "2d",
   });
 
   if (!user) {
@@ -108,11 +114,12 @@ server.post("/login", async (req, res) => {
   if (userPassword !== user.password) {
     res.send("password is not correct");
   } else {
-    console.log(user);
+    // console.log(user);
     res.status(200).json({ accessToken, user });
   }
 });
 
+// get data
 server.get("/getdata", middleware, async (req, res) => {
   // const id = req.user.id;
   // console.log(id)
@@ -124,8 +131,23 @@ server.get("/getdata", middleware, async (req, res) => {
   }
 });
 
-server.put("/update-profile", async (req, res) => {
-  const user = await User.findByIdAndUpdate(req.user.id);
+server.put("/update-profile", middleware, async (req, res) => {
+  const { firstName, lastName } = req.body;
+  const filter = { firstName, lastName };
+  const userUpdate = await User.findByIdAndUpdate(req.user.id, filter, {
+    new: true,
+  }).catch((err) => {
+    return res.status(500).send(err);
+  });
+
+  // if (userUpdate) {
+  //   window.location.reload(true);
+  // }
+
+  return res.status(200).json({
+    message: "Update User",
+    data: userUpdate,
+  });
 });
 
 server.listen(8081, () => {

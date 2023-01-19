@@ -3,6 +3,10 @@ import React, { useEffect, useState } from "react";
 
 function Profile() {
   const [user, setUser] = useState("");
+  const [fname, setFname] = useState("");
+  const [lname, setLname] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
 
   const token = localStorage.getItem("accessToken");
 
@@ -19,14 +23,24 @@ function Profile() {
 
   // console.log(data, "user data");
   console.log(user, "user");
-  const updateData = () => {};
+
+  const updateData = () => {
+    axios.get(
+      "http://localhost:8081/updatedata",
+      { fname, lname, email, password },
+      {
+        headers: {
+          token: token,
+        },
+      }
+    );
+  };
 
   return (
     <>
       <h1 className="display-3 text-center mb-3 fw-bold">Profile Data</h1>
       <div className="card w-50 m-auto shadow border-0 aa">
         <div className="card-body bb">
-          <h2 className="text-center fw-bold"></h2>
           {/* <div className="data">
             <h2>User First Name</h2>
             <h4>{user.user?.firstName}</h4>
@@ -55,6 +69,9 @@ function Profile() {
                   className="form-control"
                   placeholder="First name"
                   value={user.user?.firstName}
+                  onChange={(event) => {
+                    setFname(event.target.value);
+                  }}
                 />
               </div>
               <div className="col">
@@ -66,6 +83,9 @@ function Profile() {
                   className="form-control"
                   placeholder="Last name"
                   value={user.user?.lastName}
+                  onChange={(event) => {
+                    setLname(event.target.value);
+                  }}
                 />
               </div>
             </div>
@@ -77,8 +97,11 @@ function Profile() {
                 <input
                   type="text"
                   className="form-control"
-                  placeholder="First name"
+                  placeholder="Email"
                   value={user.user?.email}
+                  onChange={(event) => {
+                    setEmail(event.target.value);
+                  }}
                 />
               </div>
               <div className="col">
@@ -88,8 +111,11 @@ function Profile() {
                 <input
                   type="text"
                   className="form-control"
-                  placeholder="Last name"
+                  placeholder="Password"
                   value={user.user?.password}
+                  onChange={(event) => {
+                    setPassword(event.target.value);
+                  }}
                 />
               </div>
             </div>
