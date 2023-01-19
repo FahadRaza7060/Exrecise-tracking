@@ -72,11 +72,11 @@ server.post("/posts", async (req, res) => {
     res.json("Invalid Data");
   }
 
-  res.send({
-    status: true,
-    message: "User created successfully!",
-    user,
-  });
+//   res.send({
+//     status: true,
+//     message: "User created successfully!",
+//     user,
+//   });
 });
 
 // check user created or not

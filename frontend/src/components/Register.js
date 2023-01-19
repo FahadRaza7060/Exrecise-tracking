@@ -39,9 +39,8 @@ function Register() {
         console.log(response);
         const data = response.data;
         if (data.status) {
-          //   toast.success(data.message);
           toast.success("User Created SUCCESSFULLY!");
-          navigate("/signin");
+          navigate("/login");
         } else {
           toast.error(data.message);
         }
@@ -52,7 +51,7 @@ function Register() {
   };
 
   const validateEmail = (email) => {
-    
+
     return String(email)
       .toLowerCase()
       .match(
