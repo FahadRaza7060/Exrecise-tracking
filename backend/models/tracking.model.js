@@ -4,7 +4,7 @@ const exerciseScema = mongoose.Schema({
   userName: String,
   timeDuration: Number,
   date: Date,
-  comments: String,
+  description: String,
 });
 
 module.exports = mongoose.model("ExerciseInfo", exerciseScema);

@@ -52,6 +52,7 @@ function Register() {
   };
 
   const validateEmail = (email) => {
+    
     return String(email)
       .toLowerCase()
       .match(

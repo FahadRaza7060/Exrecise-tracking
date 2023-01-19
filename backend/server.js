@@ -4,6 +4,11 @@ const mongoose = require("mongoose");
 const User = require("./models/user.model");
 const ExerciseInform = require("./models/tracking.model");
 const jwt = require("jsonwebtoken");
+const bcrypt = require("bcryptjs");
+
+const dotenv = require("dotenv");
+
+dotenv.config();
 
 mongoose.set("strictQuery", false);
 mongoose.connect("mongodb://localhost:27017/exercise", function (err, db) {
@@ -16,9 +21,14 @@ server.use(express.urlencoded());
 server.use(express.json());
 server.use(cors({ origin: "*" }));
 
-// data post
+const generateToken = (id) => {
+  return jwt.sign({ id }, process.env.JWT, {
+    expiresIn: "3d",
+  });
+};
+
+// data post/ registration
 server.post("/posts", async (req, res) => {
-  // validation apply
   //   console.log(req.body);
   const { firstName, lastName, email, password } = req.body;
   if (!firstName || !lastName || !email || !password) {
@@ -37,35 +47,40 @@ server.post("/posts", async (req, res) => {
       .status(400)
       .send({ status: false, message: "Please enter valid email" });
   }
+  const salt = await bcrypt.genSalt(10);
+  const hashPassword = await bcrypt.hash(password, salt);
 
-  let user = await User.create({ firstName, lastName, email, password });
-
-  const accessToken = jwt.sign({ id: user._id }, "fahad", {
-    expiresIn: "7d",
+  const user = await User.create({
+    firstName,
+    lastName,
+    email,
+    password: hashPassword,
   });
+
+  // const accessToken = jwt.sign({ id: user._id }, "fahad", {
+  //   expiresIn: "7d",
+  // });
+
+  if (user) {
+    res.status(201).json({
+      _id: user.id,
+      firstName: user.firstName,
+      lastName: user.lastName,
+      email: user.email,
+    });
+  } else {
+    res.json("Invalid Data");
+  }
+
   res.send({
     status: true,
     message: "User created successfully!",
     user,
-    accessToken,
   });
 });
 
-const middleware = async (req, res, next) => {
-  const token = req.headers.token;
-  jwt.verify(token, "fahad", (err, user) => {
-    if (err) {
-      res.send(err.message);
-    } else {
-      req.user = user;
-      next();
-      //   res.send(verifiedJwt)
-    }
-  });
-};
-
 // check user created or not
-server.post("/create", middleware, async (req, res) => {
+server.post("/create", async (req, res) => {
   const { firstName, lastName, email, password } = req.body;
   if (!firstName || !email || !password) {
     return res
@@ -96,15 +111,26 @@ const validateEmail = (email) => {
     );
 };
 
-// login
+// login/signin
+
 server.post("/login", async (req, res) => {
   const user = await User.findOne({
     email: req.body.email,
     password: req.body.password,
   });
-  const accessToken = jwt.sign({ id: user._id }, "fahad", {
-    expiresIn: "2d",
-  });
+
+  // const accessToken = jwt.sign({ id: user._id }, "fahad", {
+  //   expiresIn: "2d",
+  // });
+
+  if (user) {
+    res.json({
+      _id: user.id,
+      firstName: user.firstName,
+      email: user.email,
+      token: generateToken(user._id),
+    });
+  }
 
   if (!user) {
     res.send("user does not exist");
@@ -115,39 +141,62 @@ server.post("/login", async (req, res) => {
     res.send("password is not correct");
   } else {
     // console.log(user);
-    res.status(200).json({ accessToken, user });
+    res.status(200).json({ generateToken, user });
   }
 });
 
 // get data
-server.get("/getdata", middleware, async (req, res) => {
+server.get("/getdata", async (req, res) => {
   // const id = req.user.id;
   // console.log(id)
+
   try {
-    const user = await User.findById(req.user.id);
-    res.send({ user });
+    const token = req.query.token;
+    console.log("token", token);
+
+    if (token) {
+      res.json("Valid Data");
+    } else {
+      res.json("Invalid Data");
+    }
   } catch (error) {
     console.log(error);
   }
 });
 
-server.put("/update-profile", middleware, async (req, res) => {
-  const { firstName, lastName } = req.body;
-  const filter = { firstName, lastName };
-  const userUpdate = await User.findByIdAndUpdate(req.user.id, filter, {
-    new: true,
-  }).catch((err) => {
-    return res.status(500).send(err);
+// server.put("/update-profile",  async (req, res) => {
+//   const { firstName, lastName } = req.body;
+//   const filter = { firstName, lastName };
+//   const userUpdate = await User.findByIdAndUpdate(user._id, filter, {
+//     new: true,
+//   }).catch((err) => {
+//     return res.status(500).send(err);
+//   });
+//   return res.status(200).json({
+//     message: "Update User",
+//     data: userUpdate,
+//   });
+// });
+
+server.post("/dashboard", async (req, res) => {
+  const { userName, timeDuration, description } = req.body;
+
+  const exercise = await ExerciseInform.create({
+    userName,
+    timeDuration,
+    description,
   });
 
-  // if (userUpdate) {
-  //   window.location.reload(true);
-  // }
-
-  return res.status(200).json({
-    message: "Update User",
-    data: userUpdate,
-  });
+  if (exercise) {
+    res.status(201).json({
+      _id: exercise.id,
+      userName: exercise.userName,
+      timeDuration: exercise.timeDuration,
+      description: exercise.description,
+    });
+  } else {
+    res.json("Invalid Data");
+  }
 });
 
 server.listen(8081, () => {
