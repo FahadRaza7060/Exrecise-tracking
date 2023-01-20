@@ -72,11 +72,11 @@ server.post("/posts", async (req, res) => {
     res.json("Invalid Data");
   }
 
-//   res.send({
-//     status: true,
-//     message: "User created successfully!",
-//     user,
-//   });
+  //   res.send({
+  //     status: true,
+  //     message: "User created successfully!",
+  //     user,
+  //   });
 });
 
 // check user created or not
@@ -112,37 +112,31 @@ const validateEmail = (email) => {
 };
 
 // login/signin
-
 server.post("/login", async (req, res) => {
-  const user = await User.findOne({
-    email: req.body.email,
-    password: req.body.password,
-  });
-
-  // const accessToken = jwt.sign({ id: user._id }, "fahad", {
-  //   expiresIn: "2d",
-  // });
-
-  if (user) {
-    res.json({
-      _id: user.id,
-      firstName: user.firstName,
-      email: user.email,
-      token: generateToken(user._id),
-    });
-  }
-
-  if (!user) {
-    res.send("user does not exist");
-  }
-
-  const userPassword = req.body.password;
-  if (userPassword !== user.password) {
-    res.send("password is not correct");
-  } else {
-    // console.log(user);
-    res.status(200).json({ generateToken, user });
-  }
+  try {
+    const { email, password } = req.body;
+    const user = await User.findOne({ email })
+    if (user && (await bcrypt.compare(password, user.password))) {
+        res.json({
+            _id: user.id,
+            firstName: user.firstName,
+            email: user.email,
+            token: generateToken(user._id)
+        })
+    }
+    if (!user) {
+        return res.status(400).json({ msg: 'Email or password incorrect' })
+    } else {
+        res.json("You are not verified")
+    }
+    const isMatch = await bcrypt.compare(password, user.password);
+    if (!isMatch) {
+        return res.status(400).json({ msg: 'Email or password incorrect' });
+    }
+    next();
+} catch (error) {
+    console.log(error);
+}
 });
 
 // get data

@@ -36,7 +36,7 @@ function Register() {
         password,
       })
       .then(function (response) {
-        console.log(response);
+        // console.log(response);
         const data = response.data;
         if (data.status) {
           toast.success("User Created SUCCESSFULLY!");
