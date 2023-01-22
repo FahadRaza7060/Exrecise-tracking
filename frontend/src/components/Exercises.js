@@ -37,8 +37,8 @@ function Exercises() {
         {data.map((item, index) => {
           return (
             <>
-              <tbody key={index}>
-                <tr>
+              <tbody>
+                <tr key={index}>
                   <td>{item.userName}</td>
                   <td>{item.timeDuration + " minutes"}</td>
                   <td>{item.description}</td>
@@ -46,7 +46,9 @@ function Exercises() {
               </tbody>
             </>
           );
-        })}
+        })
+      }
+
       </table>
     </>
   );
