@@ -5,7 +5,6 @@ const User = require("./models/user.model");
 const ExerciseInform = require("./models/tracking.model");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
-
 const dotenv = require("dotenv");
 
 dotenv.config();
