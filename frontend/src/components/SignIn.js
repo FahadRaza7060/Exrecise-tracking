@@ -31,7 +31,7 @@ function SignIn() {
         const data = response.data;
         if (data) {
           toast.success("you have loggedin successfully");
-          navigate("/profile");
+          navigate("/exercise");
           // console.log(data.accessToken,'asdfghjk');
           localStorage.setItem("accessToken", data.accessToken);
           //   toast.success(data.message);

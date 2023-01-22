@@ -28,7 +28,7 @@ const generateToken = (id) => {
 };
 
 // data post/ registration
-server.post("/posts", async (req, res) => {
+server.post("/register", async (req, res) => {
   //   console.log(req.body);
   const { firstName, lastName, email, password } = req.body;
   if (!firstName || !lastName || !email || !password) {
@@ -115,28 +115,28 @@ const validateEmail = (email) => {
 server.post("/login", async (req, res) => {
   try {
     const { email, password } = req.body;
-    const user = await User.findOne({ email })
+    const user = await User.findOne({ email });
     if (user && (await bcrypt.compare(password, user.password))) {
-        res.json({
-            _id: user.id,
-            firstName: user.firstName,
-            email: user.email,
-            token: generateToken(user._id)
-        })
+      res.json({
+        _id: user.id,
+        firstName: user.firstName,
+        email: user.email,
+        token: generateToken(user._id),
+      });
     }
     if (!user) {
-        return res.status(400).json({ msg: 'Email or password incorrect' })
+      return res.status(400).json({ msg: "Email or password incorrect" });
     } else {
-        res.json("You are not verified")
+      res.json("You are not verified");
     }
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {
-        return res.status(400).json({ msg: 'Email or password incorrect' });
+      return res.status(400).json({ msg: "Email or password incorrect" });
     }
     next();
-} catch (error) {
+  } catch (error) {
     console.log(error);
-}
+  }
 });
 
 // get data
@@ -158,7 +158,7 @@ server.get("/getdata", async (req, res) => {
   }
 });
 
-// server.put("/update-profile",  async (req, res) => {
+// server.put("/update-profile", async (req, res) => {
 //   const { firstName, lastName } = req.body;
 //   const filter = { firstName, lastName };
 //   const userUpdate = await User.findByIdAndUpdate(user._id, filter, {
@@ -191,6 +191,12 @@ server.post("/dashboard", async (req, res) => {
   } else {
     res.json("Invalid Data");
   }
+});
+
+// Get All Exercises Api
+server.get("/getallexercise", async (req, res) => {
+  const data = await ExerciseInform.find();
+  res.json(data);
 });
 
 server.listen(8081, () => {

@@ -29,7 +29,7 @@ function Register() {
     }
 
     axios
-      .post("http://localhost:8081/posts", {
+      .post("http://localhost:8081/register", {
         firstName,
         lastName,
         email,
@@ -38,7 +38,8 @@ function Register() {
       .then(function (response) {
         // console.log(response);
         const data = response.data;
-        if (data.status) {
+        console.log('aabbbcc');
+        if(data) {
           toast.success("User Created SUCCESSFULLY!");
           navigate("/login");
         } else {
